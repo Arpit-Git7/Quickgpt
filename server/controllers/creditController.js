@@ -51,7 +51,11 @@ export const purchasePlan=async(req,res)=>{
             credits:plan.credits,
             isPaid:false
         })
-        const origin = req.headers.origin || `${req.protocol}://${req.get('host')}`;
+        const origin =
+        req.headers.origin ||
+        process.env.CLIENT_URL ||
+        `http://${req.get('host')}`;
+
 
         // Make sure there's a slash before the path
         const successUrl = new URL('/loading', origin).toString();

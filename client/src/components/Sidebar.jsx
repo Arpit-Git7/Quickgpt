@@ -120,7 +120,7 @@ const Sidebar = ({isMenuOpen,setIsMenuOpen}) => {
           <p>Dark Mode</p>
         </div>
         <label className='relative inline-flex cursor-pointer'>
-          <input onClick={()=> setTheme(theme === 'dark' ? 'light' :'dark')} type="checkbox" className='sr-only peer' checked={theme==='dark'}/>
+          <input onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')} type="checkbox" className='sr-only peer' checked={theme==='dark'}/>
           <div className='w-9 h-5 bg-gray-400 rounded-full peer-checked:bg-purple-600 transition-all'>
 
           </div>

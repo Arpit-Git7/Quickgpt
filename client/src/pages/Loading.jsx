@@ -7,10 +7,10 @@ const Loading = () => {
   const{fetchUser} =useAppContext()
 
   useEffect(()=>{
-    const timeout=setTimeout(()=>{
-      fetchUser()
-      navigate('/')
-    },8000)
+    const timeout = setTimeout(async () => {
+      await fetchUser();
+      navigate('/');
+    }, 8000);
     return ()=> clearTimeout(timeout)
   },[])
   return (

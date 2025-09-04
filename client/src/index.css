@@ -8,9 +8,14 @@
 *{
    font-family: "Outfit", sans-serif;
 }
-@theme {
-  --color-primary: #E6CCFF;
+:root {
+  --color-primary: #E6CCFF; /* Light mode default */
 }
+
+.dark {
+  --color-primary: #9D4EDD; /* Example dark mode override */
+}
+
 ::-webkit-scrollbar{
   display: none;
 }
