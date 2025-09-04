@@ -18,11 +18,10 @@ app.post('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhook
 app.use(cors())
 // JSON parser but skip stripe route
 app.use((req, res, next) => {
-  if (req.originalUrl === "/api/stripe") {
-    next()
-  } else {
-    express.json()(req, res, next)
+  if (req.path === "/api/stripe") {
+    return next() // skip JSON parsing for webhook
   }
+  express.json()(req, res, next)
 })
 
 // Routes
@@ -36,3 +35,4 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
+

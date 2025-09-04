@@ -9,12 +9,14 @@ export const stripeWebhooks = async (req, res) => {
     let event;
 
     try {
+        // req.rawBody must contain the raw payload from Stripe
         event = stripe.webhooks.constructEvent(
-            req.body,
+            req.rawBody,
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (error) {
+        console.error("Webhook signature verification failed:", error.message);
         return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
@@ -29,7 +31,6 @@ export const stripeWebhooks = async (req, res) => {
 
                     if (transaction) {
                         try {
-                            // Attempt to update credits but don't break flow if it fails
                             await User.updateOne(
                                 { _id: transaction.userId },
                                 { $inc: { credits: transaction.credits } }
@@ -38,7 +39,6 @@ export const stripeWebhooks = async (req, res) => {
                             console.warn("Credits update failed:", creditError);
                         }
 
-                        // Mark transaction as paid regardless of credits update
                         transaction.isPaid = true;
                         await transaction.save();
                     }
@@ -52,11 +52,9 @@ export const stripeWebhooks = async (req, res) => {
                 break;
         }
 
-        // Always respond success to Stripe to prevent retries
         res.json({ received: true });
     } catch (error) {
         console.error("Webhook processing error:", error);
-        // Still respond success to avoid retry loops, maybe log for later fixing
         res.json({ received: true, message: "Processing error, but continuing" });
     }
 };
