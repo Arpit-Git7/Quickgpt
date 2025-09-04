@@ -51,28 +51,30 @@ export const purchasePlan=async(req,res)=>{
             credits:plan.credits,
             isPaid:false
         })
-        const {origin}=req.headers;
-        
+        const origin = req.headers.origin || `${req.protocol}://${req.get('host')}`;
+
+        // Make sure there's a slash before the path
+        const successUrl = new URL('/loading', origin).toString();
+        const cancelUrl = new URL('/', origin).toString();
+
         const session = await stripe.checkout.sessions.create({
         line_items: [
             {
-            price_data: {
-                    currency:"usd",
-                    unit_amount: plan.price*100,
-                    product_data:{
-                        name:plan.name
-                    }
-            },
-            quantity: 1,
+                price_data: {
+                    currency: "usd",
+                    unit_amount: plan.price * 100,
+                    product_data: { name: plan.name },
+                },
+                quantity: 1,
             },
         ],
         mode: 'payment',
-        success_url: `${origin}loading`,
-        cancel_url: `${origin}/`,
-        
-        metadata: {transactionId: transaction._id.toString(),appId:'quickgpt'},
-        expires_at:Math.floor(Date.now()/1000)+30*60,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: { transactionId: transaction._id.toString(), appId: 'quickgpt' },
+        expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
         });
+
         
         res.json({success:true,url:session.url})
     }catch(error){
